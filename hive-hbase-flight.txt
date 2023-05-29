@@ -1,0 +1,34 @@
+hbase(main):021:0> create 'flight2','flightinfo','delay'
+
+hbase(main):002:0> alter 'dld','col2'
+hbase(main):003:0> disable 'dld'
+hbase(main):004:0> drop 'dld'
+
+
+
+hive> create external table flight(flight_id INT,airline STRING,delay INT)
+    > STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+    > WITH SERDEPROPERTIES ( "hbase.columns.mapping" =
+    > ":key,flightinfo:flight_id,flightinfo:airline")
+    > TBLPROPERTIES ("hbase.table.name" = "flight2")
+    > ;
+
+hive> insert into flight values(1,'Lufthansa',10),(2,'Etihad',4);
+
+
+hbase(main):022:0> scan 'flight2'
+ROW                     COLUMN+CELL                                                      
+ 1                      column=flightinfo:airline, timestamp=1685381989218, value=10     
+ 1                      column=flightinfo:flight_id, timestamp=1685381989218, value=Lufth
+                        ansa                                                             
+ 2                      column=flightinfo:airline, timestamp=1685381989218, value=4      
+ 2                      column=flightinfo:flight_id, timestamp=1685381989218, value=Etiha
+                        d                                                                
+
+hive> select avg(delay) from flight;
+
+
+
+hive> create index indexft on table flight(flight_id) as 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler' 
+WITH DEFERRED REBUILD;
+
