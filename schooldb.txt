@@ -1,0 +1,224 @@
+mysql> create database schooldb;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> use schooldb;
+Database changed
+
+mysql> create table subjects (name varchar(30) primary key,topics int not null,tot_marks int);
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> create table student (rollno int primary key,name varchar(30) not null,division varchar(20));
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> create table stud_marks (rollno int,sub_name varchar(30),submarks int,
+    -> foreign key(rollno) references student(rollno) on delete cascade on update cascade);
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> alter table stud_marks add foreign key (sub_name) references subjects(name) on delete cascade on update cascade;
+Query OK, 0 rows affected (0.15 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> describe stud_marks;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| rollno   | int         | YES  | MUL | NULL    |       |
+| sub_name | varchar(30) | YES  | MUL | NULL    |       |
+| submarks | int         | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> alter table student drop primary key;
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> describe student;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| rollno   | int         | NO   |     | NULL    |       |
+| name     | varchar(30) | NO   |     | NULL    |       |
+| division | varchar(20) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> alter table student add primary key (rollno,division);
+Query OK, 0 rows affected (0.07 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> describe student;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| rollno   | int         | NO   | PRI | NULL    |       |
+| name     | varchar(30) | NO   |     | NULL    |       |
+| division | varchar(20) | NO   | PRI | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> alter table student drop primary key;
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table student drop column division;
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table student add primary key (rollno);
+Query OK, 0 rows affected (0.07 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> describe student;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| rollno | int         | NO   | PRI | NULL    |       |
+| name   | varchar(30) | NO   |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> insert into student values
+    -> (30,'Samay Khede'),
+    -> (24,'Rohan Pawar'),
+    -> (19,'Sanika Joshi');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from student;
++--------+--------------+
+| rollno | name         |
++--------+--------------+
+|     19 | Sanika Joshi |
+|     24 | Rohan Pawar  |
+|     30 | Samay Khede  |
++--------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> insert into subjects values
+    -> ('Science',18,100),
+    -> ('Maths',12,100),
+    -> ('History',8,40),
+    -> ('Geography',8,50);
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> update subjects set tot_marks = 50 where name='History';
+Query OK, 1 row affected (0.02 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from subjects;
++-----------+--------+-----------+
+| name      | topics | tot_marks |
++-----------+--------+-----------+
+| Geography |      8 |        50 |
+| History   |      8 |        50 |
+| Maths     |     12 |       100 |
+| Science   |     18 |       100 |
++-----------+--------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> insert into stud_marks values (19,'Science',92), (24,'Maths',88),(30,'Maths',95);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> truncate table stud_marks;
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> select * from stud_marks;
+Empty set (0.01 sec)
+
+mysql> insert into stud_marks values (19,'Maths',82), (24,'Maths',90),(30,'Maths',92);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into stud_marks values (19,'Science',92), (24,'Science',88),(30,'Science',95);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into stud_marks values (19,'History',38), (24,'History',40),(30,'History',34);
+Query OK, 3 rows affected (0.09 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into stud_marks values (19,'Geography',38), (24,'Geography',37),(30,'Geography',42);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from stud_marks;
++--------+-----------+----------+
+| rollno | sub_name  | submarks |
++--------+-----------+----------+
+|     19 | Maths     |       82 |
+|     24 | Maths     |       90 |
+|     30 | Maths     |       92 |
+|     19 | Science   |       92 |
+|     24 | Science   |       88 |
+|     30 | Science   |       95 |
+|     19 | History   |       38 |
+|     24 | History   |       40 |
+|     30 | History   |       34 |
+|     19 | Geography |       38 |
+|     24 | Geography |       37 |
+|     30 | Geography |       42 |
++--------+-----------+----------+
+12 rows in set (0.01 sec)
+
+mysql> select * from stud_marks order by rollno;
++--------+-----------+----------+
+| rollno | sub_name  | submarks |
++--------+-----------+----------+
+|     19 | Maths     |       82 |
+|     19 | Science   |       92 |
+|     19 | History   |       38 |
+|     19 | Geography |       38 |
+|     24 | Maths     |       90 |
+|     24 | Science   |       88 |
+|     24 | History   |       40 |
+|     24 | Geography |       37 |
+|     30 | Maths     |       92 |
+|     30 | Science   |       95 |
+|     30 | History   |       34 |
+|     30 | Geography |       42 |
++--------+-----------+----------+
+12 rows in set (0.00 sec)
+
+mysql> select rollno,sum(submarks) from stud_marks group by rollno order by sum(submarks) desc;
++--------+---------------+
+| rollno | sum(submarks) |
++--------+---------------+
+|     30 |           263 |
+|     24 |           255 |
+|     19 |           250 |
++--------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> select name,stud_marks.sub_name,submarks as marks,tot_marks as total_marks from student inner join stud_marks on
+student.rollno =stud_marks.rollno inner join subjects on subjects.subname = stud_marks.sub_name;
++--------------+-----------+-------+-------------+
+| name         | sub_name  | marks | total_marks |
++--------------+-----------+-------+-------------+
+| Sanika Joshi | Maths     |    82 |         100 |
+| Sanika Joshi | Science   |    92 |         100 |
+| Sanika Joshi | History   |    38 |          50 |
+| Sanika Joshi | Geography |    38 |          50 |
+| Rohan Pawar  | Maths     |    90 |         100 |
+| Rohan Pawar  | Science   |    88 |         100 |
+| Rohan Pawar  | History   |    40 |          50 |
+| Rohan Pawar  | Geography |    37 |          50 |
+| Samay Khede  | Maths     |    92 |         100 |
+| Samay Khede  | Science   |    95 |         100 |
+| Samay Khede  | History   |    34 |          50 |
+| Samay Khede  | Geography |    42 |          50 |
++--------------+-----------+-------+-------------+
+12 rows in set (0.00 sec)
+
+mysql> select name,sum(stud_marks.submarks) as marks,sum(tot_marks) as total_marks from student inner join stud_marks on 
+	student.rollno =stud_marks.rollno inner join subjects on subjects.subname = stud_marks.sub_name 
+	group by stud_marks.rollno order by sum(stud_marks.submarks);
++--------------+-------+-------------+
+| name         | marks | total_marks |
++--------------+-------+-------------+
+| Sanika Joshi |   250 |         300 |
+| Rohan Pawar  |   255 |         300 |
+| Samay Khede  |   263 |         300 |
++--------------+-------+-------------+
+3 rows in set (0.00 sec)
